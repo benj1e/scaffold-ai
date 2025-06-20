@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme inline {
+    --font-sora: var(--font-sora);
+    --font-rubik: var(--font-rubik);
+}

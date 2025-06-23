@@ -1,20 +1,27 @@
 import type { Metadata } from "next";
-import { Sora, Rubik } from "next/font/google";
+import { Geist, Playfair_Display, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
+const ibmPlexSans = IBM_Plex_Sans({
     subsets: ["latin"],
-    variable: "--font-sora",
+    variable: "--font-ibm-plex-sans",
+    weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
 
-const rubik = Rubik({
+const playfairDisplay = Playfair_Display({
     subsets: ["latin"],
-    variable: "--font-rubik",
+    variable: "--font-playfair-display",
+});
+
+const geist = Geist({
+    subsets: ["latin"],
+    variable: "--font-geist",
 });
 
 export const metadata: Metadata = {
     title: "Scaffold AI",
-    description: "Scaffold AI is a platform for generating project structures with ease and speed.",
+    description:
+        "Scaffold AI is a platform for generating project structures with ease and speed.",
 };
 
 export default function RootLayout({
@@ -24,8 +31,13 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${sora.variable} antialiased`}>
-                {children}
+            <body
+                className={`${ibmPlexSans.variable} ${playfairDisplay.variable} ${geist.variable} antialiased bg-black text-white min-h-screen relative overflow-x-hidden`}
+            >
+                {/* Content wrapper */}
+                <div className="relative z-10">
+                    <main className="relative">{children}</main>
+                </div>
             </body>
         </html>
     );

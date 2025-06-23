@@ -1,6 +1,48 @@
 @import "tailwindcss";
 
 @theme inline {
-    --font-sora: var(--font-sora);
-    --font-rubik: var(--font-rubik);
+    --font-ibm-plex-sans: var(--font-ibm-plex-sans);
+    --font-playfair-display: var(--font-playfair-display);
+    --font-geist: var(--font-geist);
+}
+
+/* Only essential custom styles that can't be achieved with Tailwind */
+@layer utilities {
+    /* Custom radial gradient for atmospheric effect */
+    .bg-gradient-radial {
+        background: radial-gradient(circle at center, var(--tw-gradient-stops));
+    }
+
+    /* Smooth scroll behavior */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar styling */
+    ::-webkit-scrollbar {
+        @apply w-2;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-slate-800/50;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-slate-600/50 rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-slate-500/70;
+    }
+}
+
+/* Custom animation delays that Tailwind doesn't have by default */
+@layer utilities {
+    .delay-4000 {
+        animation-delay: 4s;
+    }
+
+    .delay-5000 {
+        animation-delay: 5s;
+    }
 }

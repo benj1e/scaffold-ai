@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "animejs": "^4.0.2",
-    "blobs": "^2.3.0-beta.2",
     "lucide-react": "^0.518.0",
     "next": "15.3.4",
     "react": "^19.0.0",

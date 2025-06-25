@@ -19,9 +19,9 @@ const Hero = () => {
     }
 
     return (
-        <div className="flex flex-col items-center h-screen max-w-7xl mx-auto">
+        <div className="flex flex-col items-center h-fit w-full my-20">
             {/* Intro */}
-            <div className="flex flex-col items-center justify-center mt-40 mb-25 w-6xl max-w-full ">
+            <div className="flex flex-col items-center justify-center mt-20 mb-15 w-6xl max-w-full ">
                 <h1 className="text-6xl font-geist my-4 text-center">
                     Scaffold your project with a{" "}
                     <span className="font-playfair-display italic bg-gradient-to-r text-7xl from-blue-800 to-purple-800 text-transparent bg-clip-text">

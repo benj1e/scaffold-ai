@@ -35,7 +35,7 @@ export default function RootLayout({
                 className={`${ibmPlexSans.variable} ${playfairDisplay.variable} ${geist.variable} antialiased bg-black text-white min-h-screen relative overflow-x-hidden`}
             >
                 {/* Content wrapper */}
-                <div className="relative z-10">
+                <div className="relative z-10 p-4">
                     <main className="relative">{children}</main>
                 </div>
             </body>

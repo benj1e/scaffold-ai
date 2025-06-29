@@ -5,7 +5,7 @@ import { Sparkles } from "lucide-react"; // Using Sparkles as a placeholder logo
 
 const Navbar = () => {
     return (
-        <nav className="bg-black/30 backdrop-blur-md shadow-lg sticky top-0 z-50 w-full font-geist">
+        <nav className="bg-white/5 backdrop-blur-md shadow-lg sticky top-0 z-50 w-full font-geist">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">

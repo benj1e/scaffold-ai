@@ -1,21 +1,26 @@
 "use client";
-import React, { useState, FormEvent } from "react"; // Import FormEvent
+import React, { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
 import AnimatedBackground from "@/app/ui/background";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 const Hero = () => {
     const [prompt, setPrompt] = useState<string>("");
+    const router = useRouter(); // Initialize useRouter
 
     function handleSubmit(e: FormEvent) {
-        // Add type for the event object
-        e.preventDefault(); // Prevent default form submission behavior
+        e.preventDefault();
 
         if (!prompt.trim()) {
+            // Optionally, provide user feedback here (e.g., set an error state)
             console.log("Prompt is empty or just whitespace.");
             return;
         }
-        console.log("Prompt submitted:", prompt);
-        setPrompt(""); // Clear the input after submission
+        // Navigate to the new page with the prompt as a query parameter
+        router.push(`/prompt-display?prompt=${encodeURIComponent(prompt)}`);
+        // It's generally better not to clear the prompt here,
+        // in case the user wants to quickly modify and resubmit from the new page (though current setup doesn't support that directly)
+        // setPrompt("");
     }
 
     return (

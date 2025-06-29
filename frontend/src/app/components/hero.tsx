@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
-import AnimatedBackground from "@/app/ui/background";
+import AnimatedBackground from "./background";
 import { Sparkles } from "lucide-react";
 
 const Hero = () => {

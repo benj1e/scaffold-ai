@@ -34,8 +34,8 @@ const PromptDisplayContent = () => {
                 {/* Placeholder for FastAPI Backend Response */}
                 <div className="bg-white/5 backdrop-blur-lg rounded-xl shadow-2xl p-6 md:p-8">
                     <div className="flex items-center mb-6">
-                        <Brain className="h-8 w-8 text-green-400 mr-3" />
-                        <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                        <Brain className="h-8 w-8 text-pink-400 mr-3" />
+                        <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">
                             AI Generated Structure
                         </h2>
                     </div>

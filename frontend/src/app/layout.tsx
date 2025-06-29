@@ -38,7 +38,7 @@ export default function RootLayout({
             >
                 <Navbar /> {/* Add the Navbar here */}
                 {/* Content wrapper */}
-                <div className="relative z-10 p-4">
+                <div className="relative z-10">
                     <main className="relative">{children}</main>
                 </div>
             </body>

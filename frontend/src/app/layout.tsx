@@ -24,6 +24,8 @@ export const metadata: Metadata = {
         "Scaffold AI is a platform for generating project structures with ease and speed.",
 };
 
+import Navbar from "./components/Navbar"; // Import the Navbar component
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -34,6 +36,7 @@ export default function RootLayout({
             <body
                 className={`${ibmPlexSans.variable} ${playfairDisplay.variable} ${geist.variable} antialiased bg-black text-white min-h-screen relative overflow-x-hidden`}
             >
+                <Navbar /> {/* Add the Navbar here */}
                 {/* Content wrapper */}
                 <div className="relative z-10 p-4">
                     <main className="relative">{children}</main>

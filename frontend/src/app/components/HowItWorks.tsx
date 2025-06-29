@@ -1,33 +1,34 @@
 "use client";
 
 import { Lightbulb, ListChecks, Rocket, RotateCcw } from "lucide-react";
+import Orbs from "./Orbs";
 
 const steps = [
     {
         icon: <Lightbulb size={48} className="text-purple-400 mb-4" />,
-        title: "1. Prompt It",
+        title: "Prompt It",
         description: "Describe your desired project stack and features in natural language. e.g., “A task manager with login, PostgreSQL DB, and a REST API”",
     },
     {
         icon: <ListChecks size={48} className="text-blue-400 mb-4" />,
-        title: "2. Preview It",
+        title: "Preview It",
         description: "Review the generated file structure and code snippets. Visualize your project before you commit.",
     },
     {
         icon: <Rocket size={48} className="text-green-400 mb-4" />,
-        title: "3. Generate It",
+        title: "Generate It",
         description: "Accept the structure and instantly scaffold your project. Download, deploy, or open in your cloud IDE.",
     },
     {
         icon: <RotateCcw size={48} className="text-yellow-400 mb-4" />,
-        title: "4. Iterate Freely",
+        title: "Iterate Freely",
         description: "Need changes? Update your prompt to add features, modify the database, or scaffold new routes.",
     },
 ];
 
 const HowItWorks = () => {
     return (
-        <section className="py-16 md:py-24 bg-black font-geist">
+        <section className="pb-8 md:pb-24 bg-black font-geist relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 md:mb-16">
                     <h2 className="text-4xl md:text-5xl font-bold text-white">

@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 };
 
 import Navbar from "./components/Navbar"; // Import the Navbar component
+import Orbs from "./components/Orbs";
 
 export default function RootLayout({
     children,
@@ -37,9 +38,11 @@ export default function RootLayout({
                 className={`${ibmPlexSans.variable} ${playfairDisplay.variable} ${geist.variable} antialiased bg-black text-white min-h-screen relative overflow-x-hidden`}
             >
                 <Navbar /> {/* Add the Navbar here */}
+
                 {/* Content wrapper */}
-                <div className="relative z-10">
-                    <main className="relative">{children}</main>
+                <div className="relative ">
+                    
+                    <main >{children}</main>
                 </div>
             </body>
         </html>

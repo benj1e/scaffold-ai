@@ -66,13 +66,26 @@ import unittest
                     },
                 ],
             },
-            { id: "8", name: "README.md", type: "file", content: "# MyAwesomeProject\nThis is a sample project." },
-            { id: "9", name: "requirements.txt", type: "file", content: "Flask==2.0.1" },
+            {
+                id: "8",
+                name: "README.md",
+                type: "file",
+                content: "# MyAwesomeProject\nThis is a sample project.",
+            },
+            {
+                id: "9",
+                name: "requirements.txt",
+                type: "file",
+                content: "Flask==2.0.1",
+            },
         ],
     },
 ];
 
-export const findFileById = (nodes: FileNode[], id: string): FileNode | null => {
+export const findFileById = (
+    nodes: FileNode[],
+    id: string
+): FileNode | null => {
     for (const node of nodes) {
         if (node.id === id) {
             return node;

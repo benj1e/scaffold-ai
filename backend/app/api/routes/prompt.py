@@ -1,23 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from sqlmodel import select
 from app.core.database import SessionDep
 from app.models.prompt import Prompt, PromptCreate, PromptRead, PromptUpdate
+from typing import Optional
 
 router = APIRouter(prefix="/prompt", tags=["Prompt"])
 
 
 @router.post("/", response_model=PromptRead)
-async def create_prompt(prompt: PromptCreate, session: SessionDep):
+async def create_prompt(prompt: PromptCreate, session: SessionDep, request: Request):
     db_prompt = Prompt.model_validate(prompt)
     session.add(db_prompt)
     session.commit()
     session.refresh(db_prompt)
-    return db_prompt
+    return db_prompt.model_dump()
 
 
 @router.get("/", response_model=list[PromptRead])
-async def get_all_prompts(session: SessionDep):
-    result = session.exec(select(Prompt)).all()
+async def get_all_prompts(
+    session: SessionDep, limit: Optional[int] = 100, offset: Optional[int] = 0
+):
+    result = session.exec(select(Prompt).offset(offset).limit(limit)).all()
     return result
 
 
@@ -52,5 +55,13 @@ async def delete_prompt(prompt_id: str, session: SessionDep):
         raise HTTPException(status_code=404, detail="Prompt not found")
 
     session.delete(prompt)
+    session.commit()
+    return
+
+@router.delete("/recursive/all", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_all_prompts(session: SessionDep):
+    prompts = session.exec(select(Prompt)).all()
+    for prompt in prompts:
+        session.delete(prompt)
     session.commit()
     return

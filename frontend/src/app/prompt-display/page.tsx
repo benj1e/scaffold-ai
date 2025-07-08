@@ -11,12 +11,10 @@ import {
 } from "lucide-react";
 import FileTree from "./FileTree";
 import CodeViewer from "./CodeViewer";
-import {
-    mockFileStructure,
-    FileNode,
-    findFileById,
-} from "./mockData";
+import { mockFileStructure, FileNode, findFileById } from "./mockData";
 import Notification from "../components/Notification";
+import axios from "axios";
+import api from "@/api/config";
 
 interface AppNotification {
     id: number;
@@ -26,17 +24,37 @@ interface AppNotification {
 
 const PromptDisplayContent: React.FC = () => {
     const searchParams = useSearchParams();
-    const prompt = searchParams.get("prompt");
-
     const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<FileNode | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
+    const [promptContent, setPromptContent] = useState<string | null>(null);
 
+    async function getPromptById(promptId: string): Promise<string | null> {
+        try {
+            const response = await api.get(`/prompt/${promptId}`);
+            const promptContent = response.data.content;
+            return promptContent;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Error details:", error.response?.data);
+            } else {
+                console.error("An unexpected error occurred:", error);
+            }
+            return null;
+        }
+    }
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoading(false);
         }, 1500);
+        getPromptById(searchParams.get("prompt")!).then((content) => {
+            if (content) {
+                setPromptContent(content);
+            } else {
+                setPromptContent("Failed to load prompt content.");
+            }
+        });
         return () => clearTimeout(timer);
     }, []);
 
@@ -92,7 +110,10 @@ const PromptDisplayContent: React.FC = () => {
                     }, 1500);
                 }, 1500);
             } else {
-                addNotification("Failed to connect to GitHub. (Mock Error)", "error");
+                addNotification(
+                    "Failed to connect to GitHub. (Mock Error)",
+                    "error"
+                );
             }
         }, 2000);
     };
@@ -115,7 +136,7 @@ const PromptDisplayContent: React.FC = () => {
                         Prompt:
                     </h1>
                     <p className="text-gray-300 ml-2 truncate text-sm md:text-base">
-                        {prompt || "No prompt provided."}
+                        {promptContent || "Loading prompt..."}
                     </p>
                 </div>
                 <div className="flex items-center justify-start space-x-3 mt-3">
@@ -153,7 +174,10 @@ const PromptDisplayContent: React.FC = () => {
 
             {isLoading ? (
                 <div className="flex-grow flex flex-col items-center justify-center text-center p-10 bg-gray-800/30 rounded-lg">
-                    <Loader2 size={48} className="text-purple-500 animate-spin mb-4" />
+                    <Loader2
+                        size={48}
+                        className="text-purple-500 animate-spin mb-4"
+                    />
                     <p className="text-xl text-gray-300">
                         Generating your project structure...
                     </p>
@@ -185,7 +209,10 @@ const PromptPage: React.FC = () => {
         <Suspense
             fallback={
                 <div className="flex flex-col justify-center items-center min-h-[calc(100vh-4rem)] text-white bg-black">
-                    <Loader2 size={40} className="animate-spin text-purple-500" />
+                    <Loader2
+                        size={40}
+                        className="animate-spin text-purple-500"
+                    />
                     <p className="mt-3 text-lg">Loading Prompt Details...</p>
                 </div>
             }

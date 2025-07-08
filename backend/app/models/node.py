@@ -1,8 +1,13 @@
-from sqlmodel import SQLModel, Field
-from typing import Optional, List, Iterable
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List, Iterable, TYPE_CHECKING
 from uuid import UUID, uuid4
 from enum import Enum
 from pydantic import BaseModel
+
+# from .prompt import Prompt
+
+if TYPE_CHECKING:
+    from .prompt import Prompt
 
 
 class NodeType(str, Enum):
@@ -10,12 +15,24 @@ class NodeType(str, Enum):
     FOLDER = "folder"
 
 
-class Node(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
+class BaseNode(SQLModel):
+    id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True, index=True)
+    pass
+
+
+class Node(BaseNode, table=True):
     name: str
     type: NodeType
     content: Optional[str] = None  # Only for files
     parent_id: Optional[UUID] = Field(default=None, foreign_key="node.id")
+    prompt_id: UUID = Field(foreign_key="prompt.id", index=True)
+    prompt: Optional["Prompt"] = Relationship(back_populates="nodes")
+
+
+class CreateNode(BaseNode):
+    name: str
+    type: NodeType
+    content: Optional[str] = None
 
 
 class NodeResponse(BaseModel):

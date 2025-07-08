@@ -3,25 +3,45 @@ import React, { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
 import AnimatedBackground from "./background";
 import { Sparkles } from "lucide-react";
+import api from "@/api/config";
+import axios, { AxiosRequestConfig } from "axios";
 
 const Hero = () => {
     const [prompt, setPrompt] = useState<string>("");
     const router = useRouter(); // Initialize useRouter
 
-    function handleSubmit(e: FormEvent) {
+    const sendMyPrompt = async (): Promise<string | null> => {
+        try {
+            const response = await api.post("/prompt/", {
+                content: prompt,
+            });
+            const responseId = response.data["id"];
+            return responseId;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.log("Error details:", error.response?.data);
+            } else {
+                console.log("An unexpected error occurred:", error);
+            }
+            return null;
+        }
+    };
+
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         if (!prompt.trim()) {
-            // Optionally, provide user feedback here (e.g., set an error state)
             console.log("Prompt is empty or just whitespace.");
             return;
         }
-        // Navigate to the new page with the prompt as a query parameter
-        router.push(`/prompt-display?prompt=${encodeURIComponent(prompt)}`);
-        // It's generally better not to clear the prompt here,
-        // in case the user wants to quickly modify and resubmit from the new page (though current setup doesn't support that directly)
-        // setPrompt("");
-    }
+
+        const promptId = await sendMyPrompt();
+        if (promptId) {
+            router.push(
+                `/prompt-display?prompt=${encodeURIComponent(promptId)}`
+            );
+        }
+    };
 
     return (
         <>

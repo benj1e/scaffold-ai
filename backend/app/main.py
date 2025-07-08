@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from app.core.database import init_db
 from app.core.settings import settings
 from app.core.logger import setup_logger
-from app.api.routes import prompt, file_structure
+from app.api.routes import prompt, debug, generate
 
 # setup_logger()
 
@@ -31,8 +31,7 @@ app.add_middleware(
 )
 
 app.include_router(prompt.router)
-app.include_router(file_structure.router)
+app.include_router(debug.router)
+app.include_router(generate.router)
 
-@app.get("/")
-async def hello_world():
-    return {"message": "Hello World"}
+

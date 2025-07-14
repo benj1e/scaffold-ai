@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import FileTree from "./FileTree";
 import CodeViewer from "./CodeViewer";
-import { mockFileStructure, FileNode, findFileById } from "./mockData";
+import { FileNode } from "./mockData";
 import Notification from "../components/Notification";
 import axios from "axios";
 import api from "@/api/config";
@@ -29,6 +29,7 @@ const PromptDisplayContent: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
     const [promptContent, setPromptContent] = useState<string | null>(null);
+    const [projectStructure, setProjectStructure] = useState<FileNode[]>([]);
 
     async function getPromptById(promptId: string): Promise<string | null> {
         try {
@@ -44,24 +45,68 @@ const PromptDisplayContent: React.FC = () => {
             return null;
         }
     }
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1500);
-        getPromptById(searchParams.get("prompt")!).then((content) => {
-            if (content) {
-                setPromptContent(content);
-            } else {
-                setPromptContent("Failed to load prompt content.");
-            }
-        });
-        return () => clearTimeout(timer);
-    }, []);
 
-    const handleSelectFile = (fileId: string) => {
-        const file = findFileById(mockFileStructure, fileId);
+    async function getProjectStructure(
+        promptId: string
+    ): Promise<FileNode[] | null> {
+        try {
+            const response = await api.post(`/generate/`, {
+                prompt_id: promptId,
+            });
+            return response.data.tree;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Error details:", error.response?.data);
+            } else {
+                console.error("An unexpected error occurred:", error);
+            }
+            return null;
+        }
+    }
+
+    useEffect(() => {
+        const promptId = searchParams.get("prompt");
+        if (promptId) {
+            getPromptById(promptId).then((content) => {
+                if (content) {
+                    setPromptContent(content);
+                } else {
+                    setPromptContent("Failed to load prompt content.");
+                }
+            });
+            getProjectStructure(promptId).then((structure) => {
+                if (structure) {
+                    setProjectStructure(structure);
+                }
+                setIsLoading(false);
+            });
+        } else {
+            setIsLoading(false);
+        }
+    }, [searchParams]);
+
+    const findFileByName = (
+        nodes: FileNode[],
+        name: string
+    ): FileNode | null => {
+        for (const node of nodes) {
+            if (node.name === name) {
+                return node;
+            }
+            if (node.children) {
+                const found = findFileByName(node.children, name);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    };
+
+    const handleSelectFile = (fileName: string) => {
+        const file = findFileByName(projectStructure, fileName);
         if (file && file.type === "file") {
-            setSelectedFileId(fileId);
+            setSelectedFileId(fileName);
             setSelectedFile(file);
         } else {
             setSelectedFileId(null);
@@ -187,7 +232,7 @@ const PromptDisplayContent: React.FC = () => {
                 <div className="flex-grow grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[60vh]">
                     <div className="md:col-span-1 lg:col-span-1 h-full min-h-[300px] md:min-h-0">
                         <FileTree
-                            nodes={mockFileStructure}
+                            nodes={projectStructure}
                             onSelectFile={handleSelectFile}
                             selectedFileId={selectedFileId}
                         />

@@ -4,9 +4,11 @@ import React, { JSX, useState } from "react";
 import { FileNode } from "./mockData";
 import { Folder, FileText, ChevronRight, ChevronDown } from "lucide-react";
 
+import { FileNode } from "../../../../backend/app/models/node";
+
 interface FileTreeProps {
     nodes: FileNode[];
-    onSelectFile: (fileId: string) => void;
+    onSelectFile: (file: FileNode) => void;
     selectedFileId?: string | null;
 }
 
@@ -33,7 +35,7 @@ const FileTree: React.FC<FileTreeProps> = ({ nodes, onSelectFile, selectedFileId
                 <div
                     onClick={() => {
                         if (node.type === 'file') {
-                            onSelectFile(node.id);
+                            onSelectFile(node);
                         } else if (node.type === 'folder') {
                             toggleFolder(node.id);
                         }

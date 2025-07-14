@@ -113,14 +113,10 @@ const PromptDisplayContent: React.FC = () => {
         return null;
     };
 
-    const handleSelectFile = (fileName: string) => {
-        const file = findFileByName(projectStructure, fileName);
-        if (file && file.type === "file") {
-            setSelectedFileId(fileName);
+    const handleSelectFile = (file: FileNode) => {
+        if (file.type === "file") {
+            setSelectedFileId(file.id);
             setSelectedFile(file);
-        } else {
-            setSelectedFileId(null);
-            setSelectedFile(null);
         }
     };
 

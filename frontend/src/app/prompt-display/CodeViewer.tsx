@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Editor from "@monaco-editor/react";
 
 interface CodeViewerProps {
     fileName: string | null;
@@ -21,9 +22,25 @@ const CodeViewer: React.FC<CodeViewerProps> = ({ fileName, code }) => {
             <div className="bg-gray-700/60 p-3 rounded-t-md">
                 <h3 className="text-md font-semibold text-white">{fileName}</h3>
             </div>
-            <pre className="p-4 text-sm text-gray-200 whitespace-pre-wrap break-all overflow-y-auto custom-scrollbar flex-grow bg-gray-900/70 rounded-b-md">
-                {code || "// This file is empty or content is not available."}
-            </pre>
+            <div className="flex-grow rounded-b-md overflow-hidden">
+                <Editor
+                    height="100%"
+                    language={fileName?.split('.').pop() || 'plaintext'}
+                    value={code || ''}
+                    theme="vs-dark"
+                    options={{
+                        readOnly: true,
+                        minimap: { enabled: false },
+                        scrollBeyondLastLine: false,
+                        fontSize: 14,
+                        lineNumbers: "on",
+                        glyphMargin: false,
+                        folding: true,
+                        lineDecorationsWidth: 10,
+                        lineNumbersMinChars: 3,
+                    }}
+                />
+            </div>
         </div>
     );
 };

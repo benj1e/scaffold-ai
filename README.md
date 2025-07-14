@@ -56,7 +56,7 @@ Scafold AI is a smart project scaffolding tool that lets you generate full-stack
 ## 🛣 Project Status
 
 This is an active **Build in Public** project.  
-Follow our progress on [Twitter/X](https://twitter.com/).
+Follow our progress on [LinkedIn](https://linkedin.com/in/omoroje).
 
 If you're reading this, we’re probably deep in the next feature. Contributions, ideas, and pull requests are welcome.
 

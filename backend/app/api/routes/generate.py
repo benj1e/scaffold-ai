@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlmodel import select
 from sqlalchemy import delete
@@ -11,24 +11,45 @@ from app.utils.tree_parser import parse_generated_tree
 from app.models.node import build_tree
 from app.services.llm import LLMService
 
+router = APIRouter(prefix="/generate", tags=["Generate"])
+
 
 class DeleteNodesPayload(BaseModel):
     node_ids: List[UUID]
 
 
-router = APIRouter(prefix="/generate", tags=["Generate"])
-
-# Simulated AI Response (mock, will be replaced later)
+class PromptRequest(BaseModel):
+    prompt_id: str
 
 
 @router.post("/")
-async def generate_project_structure(prompt_id: UUID, session: SessionDep):
+async def generate_project_structure(
+    request_data: PromptRequest, session: SessionDep, request: Request
+):
+    try:
+        _prompt_id = UUID(request_data.prompt_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid prompt ID format")
 
-    prompt = session.exec(select(Prompt).where(Prompt.id == prompt_id)).first()
-
+    # Check if prompt exists
+    prompt = session.exec(select(Prompt).where(Prompt.id == _prompt_id)).first()
     if not prompt:
         raise HTTPException(404, detail="Prompt not found")
 
+    # ✅ Step 1: Check for existing structure
+    existing_nodes = session.exec(
+        select(Node).where(Node.prompt_id == _prompt_id)
+    ).all()
+
+    if existing_nodes:
+        # Return existing structure
+        return {
+            "message": "Existing project structure loaded.",
+            "prompt_id": str(prompt.id),
+            "tree": build_tree(existing_nodes),
+        }
+
+    # ✅ Step 2: Generate new structure if not found
     client = LLMService(prompt=prompt.content)
     try:
         ai_response = client.generate_project_structure()
@@ -36,13 +57,14 @@ async def generate_project_structure(prompt_id: UUID, session: SessionDep):
         raise HTTPException(
             status_code=500, detail=f"Error generating project structure: {str(e)}"
         )
+
     # Parse and save AI-generated node tree
-    nodes = parse_generated_tree(await ai_response, prompt_id=prompt_id)
+    nodes = parse_generated_tree(await ai_response, prompt_id=_prompt_id)
     session.add_all(nodes)
     session.commit()
 
     return {
-        "message": "Project generated successfully",
+        "message": "Project generated successfully.",
         "prompt_id": str(prompt.id),
         "tree": build_tree(nodes),
     }

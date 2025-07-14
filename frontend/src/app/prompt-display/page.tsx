@@ -31,18 +31,29 @@ const PromptDisplayContent: React.FC = () => {
     const [promptContent, setPromptContent] = useState<string | null>(null);
     const [projectStructure, setProjectStructure] = useState<FileNode[]>([]);
 
-    async function getPromptById(promptId: string): Promise<string | null> {
+    const addNotification = (
+        message: string,
+        type: "success" | "error" | "info"
+    ) => {
+        const newNotification = { id: Date.now(), message, type };
+        setNotifications((prev) => [...prev, newNotification]);
+    };
+
+    const removeNotification = (id: number) => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+    };
+
+    async function getPromptById(promptId: string) {
         try {
             const response = await api.get(`/prompt/${promptId}`);
-            const promptContent = response.data.content;
-            return promptContent;
+            const promptInfo = response.data.content;
+            setPromptContent(promptInfo);
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error("Error details:", error.response?.data);
             } else {
                 console.error("An unexpected error occurred:", error);
             }
-            return null;
+            addNotification("Failed to fetch prompt.", "error");
         }
     }
 
@@ -53,6 +64,7 @@ const PromptDisplayContent: React.FC = () => {
             const response = await api.post(`/generate/`, {
                 prompt_id: promptId,
             });
+            console.log("Project structure response:", response);
             return response.data.tree;
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -60,29 +72,27 @@ const PromptDisplayContent: React.FC = () => {
             } else {
                 console.error("An unexpected error occurred:", error);
             }
+            addNotification("Failed to generate project structure.", "error");
             return null;
         }
     }
 
     useEffect(() => {
         const promptId = searchParams.get("prompt");
-        if (promptId) {
-            getPromptById(promptId).then((content) => {
-                if (content) {
-                    setPromptContent(content);
-                } else {
-                    setPromptContent("Failed to load prompt content.");
-                }
-            });
-            getProjectStructure(promptId).then((structure) => {
-                if (structure) {
-                    setProjectStructure(structure);
-                }
-                setIsLoading(false);
-            });
-        } else {
+        if (!promptId) {
             setIsLoading(false);
+            return;
         }
+
+        const fetchData = async () => {
+            await getPromptById(promptId);
+            const structure = await getProjectStructure(promptId);
+            if (structure) setProjectStructure(prev => [...prev, ...structure]);
+;
+            setIsLoading(false);
+        };
+
+        fetchData();
     }, [searchParams]);
 
     const findFileByName = (
@@ -112,18 +122,6 @@ const PromptDisplayContent: React.FC = () => {
             setSelectedFileId(null);
             setSelectedFile(null);
         }
-    };
-
-    const addNotification = (
-        message: string,
-        type: "success" | "error" | "info"
-    ) => {
-        const newNotification = { id: Date.now(), message, type };
-        setNotifications((prev) => [...prev, newNotification]);
-    };
-
-    const removeNotification = (id: number) => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
     };
 
     const handleDownload = () => {
